@@ -41,6 +41,42 @@ app.get('/', (req, res) => {
     });
 });
 
+app.get('/scrape', (req, res) => {
+
+  var resultArr = [];
+
+  axios.get('https://news.ycombinator.com')
+    .then(response => {
+      var $ = cheerio.load(response.data);
+
+      $(".storylink").each(function (i, elem) {
+        var result = {};
+        result.title = $(this).text();
+        result.link = $(this).attr('href');
+        result.site = $(this).siblings('span').children('a').children('span').text();
+        resultArr.push(result);
+      });
+
+      console.log('resultArr length 1:');
+      console.log(resultArr.length); // 30
+
+      models.Article.insertMany(resultArr)
+        .then(newArticles => {
+          console.log('scrape complete!');
+          res.redirect('/');
+        })
+        .catch(err => {
+          res.redirect('/');
+          throw err;
+        });
+
+    })
+    .catch(err => {
+      res.send(err);
+    });
+});
+
+
 app.listen(port, () => {
   console.log(`App running on port ${port}`);
 });
