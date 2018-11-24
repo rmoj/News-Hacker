@@ -125,6 +125,20 @@ app.get('/api/unsave/:id', (req, res) => {
     });
 });
 
+app.get('/api/clear', (req, res) => {
+  models.Article.remove({})
+    .then(articleResponse => {
+      return models.Note.remove({});
+    })
+    .then(noteResponse => {
+      console.log('articles & notes removed!');
+      res.send('articles & notes removed!');
+    })
+    .catch(err => {
+      console.log(err);
+      res.send(err);
+    });
+});
 
 app.listen(port, () => {
   console.log(`App running on port ${port}`);
