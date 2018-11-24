@@ -76,6 +76,16 @@ app.get('/scrape', (req, res) => {
     });
 });
 
+app.get('/saved', (req, res) => {
+  models.Article.find({ saved: true })
+    .then(savedArticles => {
+      res.render('saved', { articles: savedArticles });
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
+
 
 app.listen(port, () => {
   console.log(`App running on port ${port}`);
