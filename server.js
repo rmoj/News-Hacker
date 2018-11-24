@@ -86,6 +86,32 @@ app.get('/saved', (req, res) => {
     });
 });
 
+app.get('/api/articles/:id', (req, res) => {
+  id = req.params.id;
+  models.Article.findOneAndUpdate({ _id: id }, { saved: true }, { new: true })
+    .populate('note')
+    .then(dbArticle => {
+      res.send(dbArticle);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+})
+
+app.post('/api/articles/:id', (req, res) => {
+  id = req.params.id;
+  models.Note.create(req.body)
+    .then(newNote => {
+      console.log(newNote);
+      return models.Article.findOneAndUpdate({ _id: id }, { note: newNote._id }, { new: true });
+    })
+    .then(updatedArticle => {
+      res.send(updatedArticle);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
 
 app.listen(port, () => {
   console.log(`App running on port ${port}`);
