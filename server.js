@@ -31,3 +31,16 @@ mongoose.connect(MONGODB_URI)
     console.error(err);
   });
 
+app.get('/', (req, res) => {
+  models.Article.find({})
+    .then(dbArticles => {
+      res.render('index', { articles: dbArticles });
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
+
+app.listen(port, () => {
+  console.log(`App running on port ${port}`);
+});
