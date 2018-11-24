@@ -113,6 +113,19 @@ app.post('/api/articles/:id', (req, res) => {
     });
 });
 
+app.get('/api/unsave/:id', (req, res) => {
+  id = req.params.id;
+  models.Article.findOneAndUpdate({ _id: id }, { $unset: { note: '', saved: '' } }, { new: true })
+    .then(unsavedArticle => {
+      console.log(`article ${unsavedArticle._id} saved: ${unsavedArticle.saved}`);
+      res.send(unsavedArticle);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+});
+
+
 app.listen(port, () => {
   console.log(`App running on port ${port}`);
 });
